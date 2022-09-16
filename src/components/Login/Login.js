@@ -167,33 +167,43 @@ const Login = (props) => {
       console.log("EFFECT CLEANUP");
     };
   }, []);
+  // object destructuring, Not assigning value to the property 
+  // we are assigning an Alias emailIsValid & passwordIsValid
+  const {isValid: emailIsValid} = emailState;
+  const {isValid: passwordIsValid} = passwordState;
 
-  // useEffect(() => {
-  //   const identifier = setTimeout(() => {
-  //     console.log('Checking form validity!');
-  //     setFormIsValid(
-  //       enteredEmail.includes('@') && enteredPassword.trim().length > 6
-  //     );
-  //   }, 500);
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      console.log('Checking form validity!');
+      setFormIsValid(
+        // getting verification from handlers in 1 place here
+        // now can replace with aliases too
+        emailIsValid && passwordIsValid
+        // emailState.isValid && passwordState.isValid
+      );
+    }, 500);
 
-  //   return () => {
-  //     console.log('CLEANUP');
-  //     clearTimeout(identifier);
-  //   };
-  // }, [enteredEmail, enteredPassword]);
+    return () => {
+      console.log('CLEANUP');
+      clearTimeout(identifier);
+    };
+    // here we need to care only about the validity
+    // replacing with ONLY valid state for email & password
+    // now once password and email is valid - effect won't run again if another symbol was added 
+  }, [emailIsValid, passwordIsValid]);
 
   const emailChangeHandler = (event) => {
     dispatchEmail({ type: "USER_INPUT", val: event.target.value });
 
-    setFormIsValid(
-      event.target.value.includes("@") && passwordState.isValid)
+    // setFormIsValid(
+    //   event.target.value.includes("@") && passwordState.isValid)
   };
 
   const passwordChangeHandler = (event) => {
     dispatchPassword({type: 'USER_INPUT', val: event.target.value})
     // setEnteredPassword(event.target.value);
 
-    setFormIsValid(emailState.isValid && event.target.value.trim().length > 6);
+    // setFormIsValid(emailState.isValid && event.target.value.trim().length > 6);
   };
 
   const validateEmailHandler = () => {
